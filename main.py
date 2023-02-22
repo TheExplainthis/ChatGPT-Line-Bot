@@ -56,7 +56,7 @@ def handle_text_message(event):
     else:
         response = chatgpt.get_response(user_id, text)
         msg = TextSendMessage(text=response)
-    
+
     line_bot_api.reply_message(
         event.reply_token,
         msg
@@ -64,4 +64,4 @@ def handle_text_message(event):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
