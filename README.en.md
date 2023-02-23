@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/pypi/l/ansicolortags.svg)](LICENSE) [![Release](https://img.shields.io/github/v/release/TheExplainthis/ChatGPT-Line-Bot)](https://github.com/TheExplainthis/ChatGPT-Line-Bot/releases/)
 
 ## Introduction
-Import the ChatGPT bot to Line and start interacting with it by simply typing text in the input box. In addition to ChatGPT, the model for `Text to Image` is also integrated. Enter `/imagine + text` to return the corresponding image, as shown in the figure below:
+Import the ChatGPT bot to Line and start interacting with it by simply typing text in the input box. In addition to ChatGPT, the model for DALL·E 2 is also integrated. Enter `/imagine + text` to return the corresponding image, as shown in the figure below:
 
 ![Demo](https://github.com/TheExplainthis/ChatGPT-Line-Bot/blob/main/demo/chatgpt-line-bot.gif)
 
@@ -76,7 +76,7 @@ To start a conversation with ChatGPT, simply type your message in the text input
 
 | Command | Description |
 | ------- | ----------- |
-| `/imagine` |  Type `/imagine` followed by text in the input box to call the `Text to Image` model and generate an image. |
+| `/imagine` |  Type `/imagine` followed by text in the input box to call the DALL·E 2 model and generate an image. |
 
 ## Related Projects
 - [gpt-ai-assistant](https://github.com/memochou1993/gpt-ai-assistant)
