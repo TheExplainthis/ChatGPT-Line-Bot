@@ -67,7 +67,7 @@
 3. CronJob 定時發送請求
     1. 註冊/登入 [cron-job.org](https://cron-job.org/en/)
     2. 進入後面板右上方選擇 `CREATE CRONJOB`
-    3. `Title` 輸入 `ChatGPT-Discord-Bot`，網址輸入上一步驟的網址，例如：`https://ChatGPT-Line-Bot.explainthis.repl.co/`
+    3. `Title` 輸入 `ChatGPT-Line-Bot`，網址輸入上一步驟的網址，例如：`https://ChatGPT-Line-Bot.explainthis.repl.co/`
     4. 下方則每 `5 分鐘` 打一次
     5. 按下 `CREATE`
 

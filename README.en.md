@@ -67,7 +67,7 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
 3. CronJob scheduled request sending:
     1. Register/Login to [cron-job.org](https://cron-job.org/en/)
     2. In the upper right corner of the panel, select `CREATE CRONJOB`
-    3. Enter `ChatGPT-Discord-Bot` in the Title field, and enter the URL from the previous step, for example: `https://ChatGPT-Line-Bot.explainthis.repl.co/`
+    3. Enter `ChatGPT-Line-Bot` in the Title field, and enter the URL from the previous step, for example: `https://ChatGPT-Line-Bot.explainthis.repl.co/`
     4. Send a request every `5 minutes` below
     5. Click on `CREATE`
 
