@@ -4,6 +4,11 @@
 
 [![license](https://img.shields.io/pypi/l/ansicolortags.svg)](LICENSE) [![Release](https://img.shields.io/github/v/release/TheExplainthis/ChatGPT-Line-Bot)](https://github.com/TheExplainthis/ChatGPT-Line-Bot/releases/)
 
+
+## Update
+- 2023/03/03 Model change to chat completion: `gpt-3.5-turbo`
+
+
 ## Introduction
 Import the ChatGPT bot to Line and start interacting with it by simply typing text in the input box. In addition to ChatGPT, the model for DALL·E 2 is also integrated. Enter `/imagine + text` to return the corresponding image, as shown in the figure below:
 

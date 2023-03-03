@@ -3,17 +3,17 @@ from src.memory import MemoryInterface
 
 
 class ChatGPT:
-    def __init__(self, model: ModelInterface, memory: MemoryInterface = None):
+    def __init__(self, model: ModelInterface, memory: MemoryInterface):
         self.model = model
         self.memory = memory
 
     def get_response(self, user_id: str, text: str) -> str:
-        prompt = text if self.memory is None else f'{self.memory.get(user_id)}\n\n{text}'
-        response = self.model.text_completion(f'{prompt} <|endoftext|>')
-        if self.memory is not None:
-            self.memory.append(user_id, prompt)
-            self.memory.append(user_id, response)
-        return response
+        self.memory.append(user_id, {'role': 'user', 'content': text})
+        response = self.model.chat_completion(self.memory.get(user_id))
+        role = response['choices'][0]['message']['role']
+        content = response['choices'][0]['message']['content']
+        self.memory.append(user_id, {'role': role, 'content': content})
+        return content
 
     def clean_history(self, user_id: str) -> None:
         self.memory.remove(user_id)

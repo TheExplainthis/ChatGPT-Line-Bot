@@ -4,6 +4,11 @@
 
 [![license](https://img.shields.io/pypi/l/ansicolortags.svg)](LICENSE) [![Release](https://img.shields.io/github/v/release/TheExplainthis/ChatGPT-Line-Bot)](https://github.com/TheExplainthis/ChatGPT-Line-Bot/releases/)
 
+
+## 更新
+- 2023/03/03 模型換成 chat completion: `gpt-3.5-turbo`
+
+
 ## 介紹
 在 Line 中去導入 ChatGPT Bot，只要在輸入框直接輸入文字，即可與 ChatGPT 開始互動，除了 ChatGPT 以外，也直接串上了 DALL·E 2 的模型，輸入 `/imagine + 文字`，就會回傳相對應的圖片，如下圖所示：
 

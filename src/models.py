@@ -1,8 +1,9 @@
+from typing import List, Dict
 import openai
 
 
 class ModelInterface:
-    def text_completion(self, prompt: str) -> str:
+    def chat_completion(self, messages: List[Dict]) -> str:
         pass
 
     def image_generation(self, prompt: str) -> str:
@@ -10,22 +11,17 @@ class ModelInterface:
 
 
 class OpenAIModel(ModelInterface):
-    def __init__(self, api_key: str, model_engine: str, max_tokens: int = 128, image_size: str = '512x512'):
+    def __init__(self, api_key: str, model_engine: str, image_size: str = '512x512'):
         openai.api_key = api_key
         self.model_engine = model_engine
-        self.max_tokens = max_tokens
         self.image_size = image_size
 
-    def text_completion(self, prompt: str) -> str:
-        response = openai.Completion.create(
-            engine=self.model_engine,
-            prompt=prompt,
-            max_tokens=self.max_tokens,
-            stop=None,
-            temperature=0.5,
+    def chat_completion(self, messages) -> str:
+        response = openai.ChatCompletion.create(
+            model=self.model_engine,
+            messages=messages
         )
-        text = response.choices[0].text.strip()
-        return text
+        return response
 
     def image_generation(self, prompt: str) -> str:
         response = openai.Image.create(
