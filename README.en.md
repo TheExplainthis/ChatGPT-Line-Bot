@@ -50,12 +50,12 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
         1. OpenAI API Token:
             - key: `OPENAI_API`
             - value: `[obtained from step one]`
-        2. The selected model:
+        2. Desired model:
             - key: `OPENAI_MODEL_ENGINE`
-            - value: `text-davinci-003`
-        3. ChatGPT text limit:
-            - key: `OPENAI_MAX_TOKENS`
-            - value: `128`
+            - value: `gpt-3.5-turbo`
+        3. ChatGPT wants the assistant to play the role of a keyword (currently, no further usage instructions have been officially released, and players can test it themselves).
+            - key: `SYSTEM_MESSAGE`
+            - value: `You are a helpful assistant.`
         4. Line Channel Secret:
             - key: `LINE_CHANNEL_SECRET`
             - value: `[obtained from step one]`
