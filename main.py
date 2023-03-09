@@ -53,7 +53,7 @@ def handle_text_message(event):
             original_content_url=response,
             preview_image_url=response
         )
-    else:
+    elif  text.startswith('/gpt'):
         response = chatgpt.get_response(user_id, text)
         msg = TextSendMessage(text=response)
 
