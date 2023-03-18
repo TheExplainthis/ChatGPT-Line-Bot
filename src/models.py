@@ -45,17 +45,21 @@ class OpenAIModel(ModelInterface):
             'messages': messages
         }
         r = self._request('/chat/completions', body=json_body)
+        if r.get('error'):
+            return None, None, r.get('error', {}).get('message', '')
         role = r['choices'][0]['message']['role']
         content = r['choices'][0]['message']['content']
-        return role, content
+        return role, content, None
 
     def audio_transcriptions(self, file_path, model_engine) -> str:
         files = {
             'file': open(file_path, 'rb'),
             'model': (None, 'whisper-1'),
         }
+        if r.get('error'):
+            return None, r.get('error', {}).get('message', '')
         r = self._request_with_file('/audio/transcriptions', files)
-        return r['text']
+        return r['text'], None
 
     def image_generations(self, prompt: str) -> str:
         json_body = {
@@ -64,4 +68,6 @@ class OpenAIModel(ModelInterface):
             "size": "512x512"
         }
         r = self._request('/images/generations', json_body)
-        return r['data'][0]['url']
+        if r.get('error'):
+            return None, r.get('error', {}).get('message', '')
+        return r['data'][0]['url'], None

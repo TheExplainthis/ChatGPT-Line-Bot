@@ -78,19 +78,30 @@ def handle_text_message(event):
             if text.startswith('/圖像'):
                 text = text[3:].strip()
                 role = 'assistant'
-                response = model_management[user_id].image_generations(text)
-                msg = ImageSendMessage(
-                    original_content_url=response,
-                    preview_image_url=response
-                )
+                response, error_message = model_management[user_id].image_generations(text)
+                if error_message:
+                    msg = TextSendMessage(text=error_message)
+                    memory.remove(user_id)
+                else:
+                    msg = ImageSendMessage(
+                        original_content_url=response,
+                        preview_image_url=response
+                    )
+                    memory.append(user_id, {
+                        'role': role,
+                        'content': response
+                    })
             else:
-                role, response = model_management[user_id].chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-                msg = TextSendMessage(text=response)
-            memory.append(user_id, {
-                'role': role,
-                'content': response
-            })
-
+                role, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+                if error_message:
+                    msg = TextSendMessage(text=error_message)
+                    memory.remove(user_id)
+                else:
+                    msg = TextSendMessage(text=response)
+                    memory.append(user_id, {
+                        'role': role,
+                        'content': response
+                    })
     line_bot_api.reply_message(event.reply_token, msg)
 
 
@@ -103,12 +114,22 @@ def handle_audio_message(event):
         for chunk in audio_content.iter_content():
             fd.write(chunk)
 
-    transciption = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+    transciption, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+    if error_message:
+        os.remove(input_audio_path)    
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+        return
     memory.append(user_id, {
         'role': 'user',
         'content': transciption
     })
-    role, response = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
+
+    role, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
+    if error_message:
+        os.remove(input_audio_path)    
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+        memory.remove(user_id)
+        return
     memory.append(user_id, {
         'role': role,
         'content': response
