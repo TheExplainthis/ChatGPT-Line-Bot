@@ -54,7 +54,7 @@ def handle_text_message(event):
                 model = OpenAIModel(api_key=api_key)
                 sucessful = model.check_token_valid()
                 if not sucessful:
-                    msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
+                    msg = TextSendMessage(text='Token 無效，請重新註冊，注意格式有空格，格式為 /註冊 sk-xxxxx')
                 else:
                     model_management[user_id] = model
                     api_keys[user_id] = api_key
@@ -63,7 +63,7 @@ def handle_text_message(event):
             except Exception:
                 msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
         else:
-            msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
+            msg = TextSendMessage(text='Token 無效，請重新註冊，注意格式有空格，格式為 /註冊 sk-xxxxx')
 
     elif text.startswith('/系統訊息'):
         _, system_message = text.split(' ')
