@@ -48,19 +48,19 @@ def handle_text_message(event):
     text = event.message.text
     logger.info(f'{user_id}: {text}')
     if text.startswith('/註冊'):
-        if ' ' not in text:
-            api_key = text[3:]
-        else:
+        if len(text.split(' ')) == 2:
             _, api_key = text.split(' ')
-        model = OpenAIModel(api_key=api_key)
-        sucessful = model.check_token_valid()
-        if not sucessful:
-            msg = TextSendMessage(text='Token 無效，請重新註冊')
+            model = OpenAIModel(api_key=api_key)
+            sucessful = model.check_token_valid()
+            if not sucessful:
+                msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
+            else:
+                model_management[user_id] = model
+                api_keys[user_id] = api_key
+                storage.save(api_keys)
+                msg = TextSendMessage(text='Token 有效，註冊成功')
         else:
-            model_management[user_id] = model
-            api_keys[user_id] = api_key
-            storage.save(api_keys)
-            msg = TextSendMessage(text='Token 有效，註冊成功')
+            msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
 
     elif text.startswith('/系統訊息'):
         _, system_message = text.split(' ')
