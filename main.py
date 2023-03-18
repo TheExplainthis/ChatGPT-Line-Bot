@@ -48,7 +48,6 @@ def handle_text_message(event):
     text = event.message.text
     logger.info(f'{user_id}: {text}')
     if text.startswith('/註冊'):
-        print(f'{text}')
         if ' ' not in text:
             api_key = text[3:]
         else:
@@ -70,6 +69,7 @@ def handle_text_message(event):
 
     elif text.startswith('/清除'):
         memory.remove(user_id)
+        msg = TextSendMessage(text='歷史訊息清除成功')
 
     else:
         if not model_management.get(user_id):
