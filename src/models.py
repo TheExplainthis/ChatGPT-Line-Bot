@@ -1,5 +1,9 @@
 from typing import List, Dict
 import requests
+import opencc
+
+s2t_converter = opencc.OpenCC('s2t.json')
+t2s_converter = opencc.OpenCC('t2s.json')
 
 
 class ModelInterface:
@@ -49,7 +53,8 @@ class OpenAIModel(ModelInterface):
             return None, None, r.get('error', {}).get('message', '')
         role = r['choices'][0]['message']['role']
         content = r['choices'][0]['message']['content'].strip()
-        return role, content, None
+        response = s2t_converter.convert(content)
+        return role, response, None
 
     def audio_transcriptions(self, file_path, model_engine) -> str:
         files = {
