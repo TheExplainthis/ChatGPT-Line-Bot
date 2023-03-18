@@ -48,6 +48,7 @@ def handle_text_message(event):
     text = event.message.text
     logger.info(f'{user_id}: {text}')
     if text.startswith('/註冊'):
+        print(f'{text}')
         if ' ' not in text:
             api_key = text[3:]
         else:
