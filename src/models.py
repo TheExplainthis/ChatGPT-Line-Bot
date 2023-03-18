@@ -48,7 +48,7 @@ class OpenAIModel(ModelInterface):
         if r.get('error'):
             return None, None, r.get('error', {}).get('message', '')
         role = r['choices'][0]['message']['role']
-        content = r['choices'][0]['message']['content']
+        content = r['choices'][0]['message']['content'].strip()
         return role, content, None
 
     def audio_transcriptions(self, file_path, model_engine) -> str:
