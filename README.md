@@ -6,6 +6,7 @@
 
 
 ## 更新
+- 2023/03/18 新增 Whipser 服務、用戶可以新增自己的 Token
 - 2023/03/03 模型換成 chat completion: `gpt-3.5-turbo`
 
 

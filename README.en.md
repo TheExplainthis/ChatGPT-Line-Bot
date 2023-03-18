@@ -6,6 +6,7 @@
 
 
 ## Update
+- 2023/03/18 Added Whisper service, and users can now add their own tokens.
 - 2023/03/03 Model change to chat completion: `gpt-3.5-turbo`
 
 
