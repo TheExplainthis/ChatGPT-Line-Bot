@@ -83,6 +83,11 @@ To start a conversation with ChatGPT, simply type your message in the text input
 | ------- | ----------- |
 | `/imagine` |  Type `/imagine` followed by text in the input box to call the DALL·E 2 model and generate an image. |
 
+## Support Us
+Like this free project? Please consider [supporting us](https://www.buymeacoffee.com/explainthis) to keep it running.
+
+[<a href="https://www.buymeacoffee.com/explainthis" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="45px" width="162px" alt="Buy Me A Coffee"></a>](https://www.buymeacoffee.com/explainthis)
+
 ## Related Projects
 - [gpt-ai-assistant](https://github.com/memochou1993/gpt-ai-assistant)
 - [ChatGPT-Discord-Bot](https://github.com/TheExplainthis/ChatGPT-Discord-Bot)
