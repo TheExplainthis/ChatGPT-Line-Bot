@@ -56,9 +56,9 @@ class OpenAIModel(ModelInterface):
             'file': open(file_path, 'rb'),
             'model': (None, 'whisper-1'),
         }
+        r = self._request_with_file('/audio/transcriptions', files)
         if r.get('error'):
             return None, r.get('error', {}).get('message', '')
-        r = self._request_with_file('/audio/transcriptions', files)
         return r['text'], None
 
     def image_generations(self, prompt: str) -> str:

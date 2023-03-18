@@ -24,7 +24,7 @@ line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 storage = Storage('db.json')
 
-memory = Memory(system_message=os.getenv('OPENAI_SYSTEM_MESSAGE'), memory_message_count=2)
+memory = Memory(system_message=os.getenv('SYSTEM_MESSAGE'), memory_message_count=2)
 model_management = {}
 api_keys = {}
 
