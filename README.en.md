@@ -6,7 +6,7 @@
 
 
 ## Update
-- 2023/03/18 Added Whisper service, and users can now add their own tokens.
+- 2023/03/18 Added Whisper service, users can now add their own tokens, and added command (refer to the documentation below)
 - 2023/03/03 Model change to chat completion: `gpt-3.5-turbo`
 
 
@@ -80,9 +80,16 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
 ## Commands
 To start a conversation with ChatGPT, simply type your message in the text input box. Other available commands include:
 
+
 | Command | Description |
 | ------- | ----------- |
-| `/imagine` |  Type `/imagine` followed by text in the input box to call the DALL·E 2 model and generate an image. |
+| `/註冊` | Enter `/註冊` + OpenAI API Token in the input box to register your token|
+| `/系統訊息` | Enter `/系統訊息` + the role you want ChatGPT to play in the input box|
+| `/清除` | Enter `/清除` in the input box to clear the chat history|
+| `/圖像` | Enter `/圖像` + command in the input box to call the DALL·E 2 model and generate an image|
+| Voice input | Use voice input, the system will automatically translate the voice into text, and ChatGPT will respond in text| 
+| Text input | Directly input text to enter the normal ChatGPT conversation mode|
+
 
 ## Support Us
 Like this free project? Please consider [supporting us](https://www.buymeacoffee.com/explainthis) to keep it running.
