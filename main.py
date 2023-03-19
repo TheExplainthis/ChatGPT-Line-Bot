@@ -64,7 +64,16 @@ def handle_text_message(event):
                 msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
         else:
             msg = TextSendMessage(text='Token 無效，請重新註冊，注意格式有空格，格式為 /註冊 sk-xxxxx')
-
+    elif text.startswith('/指令說明'):
+        msg = TextSendMessage(text="""
+            指令： \n
+            ∙ /註冊 + API Token \n
+            ∙ /系統訊息 + Prompt \n
+            ∙ /清除 \n
+            ∙ /圖像 + Prompt \n
+            ∙ 語音輸入 \n
+            ∙ 其他文字輸入 \n
+        """)
     elif text.startswith('/系統訊息'):
         _, system_message = text.split(' ')
         memory.change_system_message(user_id, system_message)
