@@ -122,28 +122,32 @@ def handle_audio_message(event):
         for chunk in audio_content.iter_content():
             fd.write(chunk)
 
-    transciption, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
-    if error_message:
-        os.remove(input_audio_path)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
-        return
-    memory.append(user_id, {
-        'role': 'user',
-        'content': transciption
-    })
+    if not model_management.get(user_id):
+        msg = TextSendMessage(text='請先註冊你的 API Token，格式為 /註冊 [API TOKEN]')
+    else:
+        transciption, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+        if error_message:
+            os.remove(input_audio_path)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+            return
+        memory.append(user_id, {
+            'role': 'user',
+            'content': transciption
+        })
 
-    role, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
-    if error_message:
+        role, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
+        if error_message:
+            os.remove(input_audio_path)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
+            memory.remove(user_id)
+            return
+        memory.append(user_id, {
+            'role': role,
+            'content': response
+        })
         os.remove(input_audio_path)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
-        memory.remove(user_id)
-        return
-    memory.append(user_id, {
-        'role': role,
-        'content': response
-    })
-    os.remove(input_audio_path)
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+        msg = TextSendMessage(text=response)
+    line_bot_api.reply_message(event.reply_token, msg)
 
 
 @app.route("/", methods=['GET'])
