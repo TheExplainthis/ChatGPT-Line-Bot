@@ -124,7 +124,7 @@ def handle_audio_message(event):
 
     transciption, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
     if error_message:
-        os.remove(input_audio_path)    
+        os.remove(input_audio_path)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
         return
     memory.append(user_id, {
@@ -134,7 +134,7 @@ def handle_audio_message(event):
 
     role, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
     if error_message:
-        os.remove(input_audio_path)    
+        os.remove(input_audio_path)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error_message))
         memory.remove(user_id)
         return

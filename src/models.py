@@ -28,29 +28,45 @@ class OpenAIModel(ModelInterface):
         self.base_url = 'https://api.openai.com/v1'
 
     def check_token_valid(self):
-        r = requests.get('https://api.openai.com/v1/models', headers=self.headers)
-        if r.json().get('error'):
-            return False
-        return True
+        try:
+            r = requests.get('https://api.openai.com/v1/models', headers=self.headers)
+            r = r.json()
+            if r.get('error'):
+                return False, r.get('error', {}).get('message')
+        except Exception:
+            return False, 'OpenAI API 系統不穩定，請稍後再試'
+        return True, None
 
     def _request(self, endpoint, body):
-        self.headers['Content-Type'] = 'application/json'
-        r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, json=body)
-        return r.json()
+        try:
+            self.headers['Content-Type'] = 'application/json'
+            r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, json=body)
+            r = r.json()
+            if r.get('error'):
+                return False, None, r.get('error', {}).get('message')
+        except Exception:
+            return False, None, 'OpenAI API 系統不穩定，請稍後再試'
+        return True, r, None
 
     def _request_with_file(self, endpoint, files):
-        self.headers.pop('Content-Type', None)
-        r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, files=files)
-        return r.json()
+        try:
+            self.headers.pop('Content-Type', None)
+            r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, files=files)
+            r = r.json()
+            if r.get('error'):
+                return False, None, r.get('error', {}).get('message')
+        except Exception:
+            return False, None, 'OpenAI API 系統不穩定，請稍後再試'
+        return True, r, None
 
     def chat_completions(self, messages, model_engine) -> str:
         json_body = {
             'model': model_engine,
             'messages': messages
         }
-        r = self._request('/chat/completions', body=json_body)
-        if r.get('error'):
-            return None, None, r.get('error', {}).get('message', '')
+        is_successful, r, error_message = self._request('/chat/completions', body=json_body)
+        if not is_successful:
+            return None, None, error_message
         role = r['choices'][0]['message']['role']
         content = r['choices'][0]['message']['content'].strip()
         response = s2t_converter.convert(content)
@@ -61,9 +77,9 @@ class OpenAIModel(ModelInterface):
             'file': open(file_path, 'rb'),
             'model': (None, 'whisper-1'),
         }
-        r = self._request_with_file('/audio/transcriptions', files)
-        if r.get('error'):
-            return None, r.get('error', {}).get('message', '')
+        is_successful, r, error_message = self._request_with_file('/audio/transcriptions', files)
+        if not is_successful:
+            return None, error_message
         return r['text'], None
 
     def image_generations(self, prompt: str) -> str:
@@ -72,7 +88,7 @@ class OpenAIModel(ModelInterface):
             "n": 1,
             "size": "512x512"
         }
-        r = self._request('/images/generations', json_body)
-        if r.get('error'):
-            return None, r.get('error', {}).get('message', '')
+        is_successful, r, error_message = self._request('/images/generations', json_body)
+        if not is_successful:
+            return None, error_message
         return r['data'][0]['url'], None
