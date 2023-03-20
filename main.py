@@ -100,6 +100,8 @@ def handle_text_message(event):
         memory.remove(user_id)
         if str(e).startswith('Incorrect API key provided'):
             msg = TextSendMessage(text='OpenAI API Token 有誤，請重新註冊。')
+        elif str(e).startswith('That model is currently overloaded with other requests.'):
+            msg = TextSendMessage(text='已超過負荷，請稍後再試')
         else:
             msg = TextSendMessage(text=str(e))
     line_bot_api.reply_message(event.reply_token, msg)
