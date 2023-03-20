@@ -34,10 +34,13 @@ class Memory(MemoryInterface):
         self.system_messages[user_id] = system_message
         self.remove(user_id)
 
-    def append(self, user_id: str, message: Dict) -> None:
+    def append(self, user_id: str, role: str, content: str) -> None:
         if self.storage[user_id] == []:
             self._initialize(user_id)
-        self.storage[user_id].append(message)
+        self.storage[user_id].append({
+            'role': role,
+            'content': content
+        })
         self._drop_message(user_id)
 
     def get(self, user_id: str) -> str:

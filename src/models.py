@@ -1,9 +1,5 @@
 from typing import List, Dict
 import requests
-import opencc
-
-s2t_converter = opencc.OpenCC('s2t.json')
-t2s_converter = opencc.OpenCC('t2s.json')
 
 
 class ModelInterface:
@@ -22,65 +18,43 @@ class ModelInterface:
 
 class OpenAIModel(ModelInterface):
     def __init__(self, api_key: str):
-        self.headers = {
-            'Authorization': f'Bearer {api_key}'
-        }
+        self.api_key = api_key
         self.base_url = 'https://api.openai.com/v1'
 
+    def _request(self, method, endpoint, body=None, files=None):
+        self.headers = {
+            'Authorization': f'Bearer {self.api_key}'
+        }
+        try:
+            if method == 'GET':
+                r = requests.get(f'{self.base_url}{endpoint}', headers=self.headers)
+            elif method == 'POST':
+                if body:
+                    self.headers['Content-Type'] = 'application/json'
+                r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, json=body, files=files)
+            r = r.json()
+            if r.get('error'):
+                return False, None, r.get('error', {}).get('message')
+        except Exception:
+            return False, None, 'OpenAI API 系統不穩定，請稍後再試'
+        return True, r, None
+
     def check_token_valid(self):
-        try:
-            r = requests.get('https://api.openai.com/v1/models', headers=self.headers)
-            r = r.json()
-            if r.get('error'):
-                return False, r.get('error', {}).get('message')
-        except Exception:
-            return False, 'OpenAI API 系統不穩定，請稍後再試'
-        return True, None
-
-    def _request(self, endpoint, body):
-        try:
-            self.headers['Content-Type'] = 'application/json'
-            r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, json=body)
-            r = r.json()
-            if r.get('error'):
-                return False, None, r.get('error', {}).get('message')
-        except Exception:
-            return False, None, 'OpenAI API 系統不穩定，請稍後再試'
-        return True, r, None
-
-    def _request_with_file(self, endpoint, files):
-        try:
-            self.headers.pop('Content-Type', None)
-            r = requests.post(f'{self.base_url}{endpoint}', headers=self.headers, files=files)
-            r = r.json()
-            if r.get('error'):
-                return False, None, r.get('error', {}).get('message')
-        except Exception:
-            return False, None, 'OpenAI API 系統不穩定，請稍後再試'
-        return True, r, None
+        return self._request('GET', '/models')
 
     def chat_completions(self, messages, model_engine) -> str:
         json_body = {
             'model': model_engine,
             'messages': messages
         }
-        is_successful, r, error_message = self._request('/chat/completions', body=json_body)
-        if not is_successful:
-            return None, None, error_message
-        role = r['choices'][0]['message']['role']
-        content = r['choices'][0]['message']['content'].strip()
-        response = s2t_converter.convert(content)
-        return role, response, None
+        return self._request('POST', '/chat/completions', body=json_body)
 
     def audio_transcriptions(self, file_path, model_engine) -> str:
         files = {
             'file': open(file_path, 'rb'),
-            'model': (None, 'whisper-1'),
+            'model': (None, model_engine),
         }
-        is_successful, r, error_message = self._request_with_file('/audio/transcriptions', files)
-        if not is_successful:
-            return None, error_message
-        return r['text'], None
+        return self._request('POST', '/audio/transcriptions', files=files)
 
     def image_generations(self, prompt: str) -> str:
         json_body = {
@@ -88,7 +62,4 @@ class OpenAIModel(ModelInterface):
             "n": 1,
             "size": "512x512"
         }
-        is_successful, r, error_message = self._request('/images/generations', json_body)
-        if not is_successful:
-            return None, error_message
-        return r['data'][0]['url'], None
+        return self._request('/images/generations', body=json_body)
