@@ -78,11 +78,12 @@ def handle_text_message(event):
             is_successful, response, error_message = model_management[user_id].image_generations(prompt)
             if not is_successful:
                 raise Exception(error_message)
+            url = response['data'][0]['url']
             msg = ImageSendMessage(
-                original_content_url=response,
-                preview_image_url=response
+                original_content_url=url,
+                preview_image_url=url
             )
-            memory.append(user_id, 'assistant', response)
+            memory.append(user_id, 'assistant', url)
 
         else:
             memory.append(user_id, 'user', text)
@@ -97,7 +98,10 @@ def handle_text_message(event):
         msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
     except Exception as e:
         memory.remove(user_id)
-        msg = TextSendMessage(text=str(e))
+        if str(e).startswith('Incorrect API key provided'):
+            msg = TextSendMessage(text='OpenAI API Token 有誤，請重新註冊。')
+        else:
+            msg = TextSendMessage(text=str(e))
     line_bot_api.reply_message(event.reply_token, msg)
 
 
@@ -114,10 +118,10 @@ def handle_audio_message(event):
         if not model_management.get(user_id):
             raise ValueError('Invalid API token')
         else:
-            transciption, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
-            memory.append(user_id, 'user', transciption)
-            if error_message:
+            is_successful, response, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+            if not is_successful:
                 raise Exception(error_message)
+            memory.append(user_id, 'user', response['text'])
             is_successful, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
             if not is_successful:
                 raise Exception(error_message)
@@ -128,7 +132,10 @@ def handle_audio_message(event):
         msg = TextSendMessage(text='請先註冊你的 API Token，格式為 /註冊 [API TOKEN]')
     except Exception as e:
         memory.remove(user_id)
-        msg = TextSendMessage(text=str(e))
+        if str(e).startswith('Incorrect API key provided'):
+            msg = TextSendMessage(text='OpenAI API Token 有誤，請重新註冊。')
+        else:
+            msg = TextSendMessage(text=str(e))
     os.remove(input_audio_path)
     line_bot_api.reply_message(event.reply_token, msg)
 
