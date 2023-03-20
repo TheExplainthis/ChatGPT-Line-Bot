@@ -2,7 +2,7 @@ version: "3"
 
 services:
   app:
-    container_name: discord-chatgpt-ai-assistant
+    container_name: ChatGPT-Line-Bot
     build: .
     restart: always
     ports:
