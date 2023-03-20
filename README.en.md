@@ -48,19 +48,16 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
 1. Environment variables setting:
     1. After completing the previous step of `Import`, click on `Tools` at the bottom left of the project management page in `Replit`, then click on `Secrets`.
     2. Click on `Got it` on the right side to add environment variables, which includes:
-        1. OpenAI API Token:
-            - key: `OPENAI_API`
-            - value: `[obtained from step one]`
-        2. Desired model:
+        1. Desired model:
             - key: `OPENAI_MODEL_ENGINE`
             - value: `gpt-3.5-turbo`
-        3. ChatGPT wants the assistant to play the role of a keyword (currently, no further usage instructions have been officially released, and players can test it themselves).
+        2. ChatGPT wants the assistant to play the role of a keyword (currently, no further usage instructions have been officially released, and players can test it themselves).
             - key: `SYSTEM_MESSAGE`
             - value: `You are a helpful assistant.`
-        4. Line Channel Secret:
+        3. Line Channel Secret:
             - key: `LINE_CHANNEL_SECRET`
             - value: `[obtained from step one]`
-        5. Line Channel Access Token:
+        4. Line Channel Access Token:
             - key: `LINE_CHANNEL_ACCESS_TOKEN`
             - value: `[obtained from step one]`
 2. Start running:

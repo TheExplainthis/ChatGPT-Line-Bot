@@ -48,19 +48,16 @@
 1. 環境變數設定
     1. 接續上一步 `Import` 完成後在 `Replit` 的專案管理頁面左下方 `Tools` 點擊 `Secrets`。
     2. 右方按下 `Got it` 後，即可新增環境變數，需新增：
-        1. OpenAI API Token：
-            - key: `OPENAI_API`
-            - value: `[由上方步驟一取得]`
-        2. 欲選擇的模型：
+        1. 欲選擇的模型：
             - key: `OPENAI_MODEL_ENGINE`
             - value: `gpt-3.5-turbo`  
-        3. ChatGPT 要讓助理扮演的角色詞（目前官方無釋出更多的使用方法，由玩家自行測試）
+        2. ChatGPT 要讓助理扮演的角色詞（目前官方無釋出更多的使用方法，由玩家自行測試）
             - key: `SYSTEM_MESSAGE`
             - value: `You are a helpful assistant.`
-        4. Line Channel Secret:
+        3. Line Channel Secret:
             - key: `LINE_CHANNEL_SECRET`
             - value: `[由步驟一取得]`
-        5. Line Channel Access Token:
+        4. Line Channel Access Token:
             - key: `LINE_CHANNEL_ACCESS_TOKEN`
             - value: `[由步驟一取得]`
 2. 開始執行
