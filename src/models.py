@@ -6,10 +6,10 @@ class ModelInterface:
     def check_token_valid(self) -> bool:
         pass
 
-    def chat_completions(self, messages: List[Dict]) -> str:
+    def chat_completions(self, messages: List[Dict], model_engine: str) -> str:
         pass
 
-    def audio_transcriptions(self, file) -> str:
+    def audio_transcriptions(self, file, model_engine: str) -> str:
         pass
 
     def image_generations(self, prompt: str) -> str:
@@ -62,4 +62,4 @@ class OpenAIModel(ModelInterface):
             "n": 1,
             "size": "512x512"
         }
-        return self._request('/images/generations', body=json_body)
+        return self._request('POST', '/images/generations', body=json_body)
