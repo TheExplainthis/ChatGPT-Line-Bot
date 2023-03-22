@@ -96,6 +96,8 @@ def handle_text_message(event):
 
     except ValueError:
         msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
+    except KeyError:
+        msg = TextSendMessage(text='請先註冊 Token，格式為 /註冊 sk-xxxxx')
     except Exception as e:
         memory.remove(user_id)
         if str(e).startswith('Incorrect API key provided'):
