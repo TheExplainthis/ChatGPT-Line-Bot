@@ -100,7 +100,10 @@ def handle_text_message(event):
                     if not is_successful:
                         raise Exception(error_message)
                     youtube_transcript_reader = YoutubeTranscriptReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-                    role, response = youtube_transcript_reader.summarize(chunks)
+                    is_successful, response, error_message = youtube_transcript_reader.summarize(chunks)
+                    if not is_successful:
+                        raise Exception(error_message)
+                    role, response = get_role_and_content(response)
                     msg = TextSendMessage(text=response)
                 else:
                     chunks = website.get_content_from_url(url)
@@ -108,7 +111,10 @@ def handle_text_message(event):
                         msg = TextSendMessage(text='無法撈取此網站文字')
                     else:
                         website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-                        role, response = website_reader.summarize(chunks)
+                        is_successful, response, error_message = website_reader.summarize(chunks)
+                        if not is_successful:
+                            raise Exception(error_message)
+                        role, response = get_role_and_content(response)
                         msg = TextSendMessage(text=response)
             else:
                 is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))

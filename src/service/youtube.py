@@ -1,6 +1,7 @@
 import math
 import os
 import re
+from src.utils import get_role_and_content
 
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled
 
@@ -51,8 +52,7 @@ class YoutubeTranscriptReader:
         self.model_engine = model_engine
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completions(msg, self.model_engine)
-        return role, content
+        return self.model.chat_completions(msg, self.model_engine)
 
     def summarize(self, chunks):
         summary_msg = []
@@ -63,7 +63,8 @@ class YoutubeTranscriptReader:
                 }, {
                     "role": "user", "content": self.part_message_format.format(i, chunk, i)
                 }]
-                _, content = self.send_msg(msgs)
+                _, response, _ = self.send_msg(msgs)
+                _, content = get_role_and_content(response)
                 summary_msg.append(content)
             text = '\n'.join(summary_msg)
             msgs = [{
@@ -78,5 +79,4 @@ class YoutubeTranscriptReader:
             }, {
                 'role': 'user', 'content': self.single_message_format.format(text)
             }]
-        role, response = self.send_msg(msgs)
-        return role, response
+        return self.send_msg(msgs)

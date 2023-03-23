@@ -50,8 +50,7 @@ class WebsiteReader:
         self.model_engine = model_engine
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completions(msg, self.model_engine)
-        return role, content
+        return self.model.chat_completions(msg, self.model_engine)
 
     def summarize(self, chunks):
         text = '\n'.join(chunks)[:self.text_length_limit]
@@ -60,5 +59,4 @@ class WebsiteReader:
         }, {
             "role": "user", "content": self.message_format.format(text)
         }]
-        role, response = self.send_msg(msgs)
-        return role, response
+        return self.send_msg(msgs)
