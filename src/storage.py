@@ -1,4 +1,5 @@
 import json
+import datetime
 
 
 class FileStorage:
@@ -20,12 +21,14 @@ class MongoStorage:
         self.db = db
 
     def save(self, data):
+        user_id, api_key = data.items()
         self.db['api_key'].update_one({
-            'user_id': data.get('user_id')
+            'user_id': user_id
         }, {
             '$set': {
-                'user_id': data.get('user_id'),
-                'api_key': data.get('api_key'),
+                'user_id': user_id,
+                'api_key': api_key,
+                'created_at': datetime.datetime.utcnow()
             }
         }, upsert=True)
 
