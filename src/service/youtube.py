@@ -50,7 +50,7 @@ class YoutubeTranscriptReader:
         self.model = model
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completion(msg)
+        role, content = self.model.chat_completions(msg)
         return role, content
 
     def summarize(self, chunks):

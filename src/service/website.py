@@ -49,7 +49,7 @@ class WebsiteReader:
         self.text_length_limit = 1800
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completion(msg)
+        role, content = self.model.chat_completions(msg)
         return role, content
 
     def summarize(self, chunks):
