@@ -21,7 +21,7 @@ class MongoStorage:
         self.db = db
 
     def save(self, data):
-        user_id, api_key = data.items()
+        user_id, api_key = list(data.items())[0]
         self.db['api_key'].update_one({
             'user_id': user_id
         }, {
