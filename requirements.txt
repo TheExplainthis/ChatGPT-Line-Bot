@@ -2,3 +2,4 @@ line-bot-sdk==2.4.1
 python-dotenv==0.21.1
 Flask==2.2.2
 opencc-python-reimplemented==0.1.4
+beautifulsoup4==4.11.2

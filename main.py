@@ -17,6 +17,8 @@ from src.memory import Memory
 from src.logger import logger
 from src.storage import Storage
 from src.utils import get_role_and_content
+from src.service.youtube import Youtube, YoutubeTranscriptReader
+from src.service.website import Website, WebsiteReader
 
 load_dotenv('.env')
 
@@ -24,6 +26,9 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 storage = Storage('db.json')
+youtube = Youtube(step=4)
+website = Website()
+
 
 memory = Memory(system_message=os.getenv('SYSTEM_MESSAGE'), memory_message_count=2)
 model_management = {}
@@ -86,12 +91,31 @@ def handle_text_message(event):
             memory.append(user_id, 'assistant', url)
 
         else:
+            user_model = model_management[user_id]
             memory.append(user_id, 'user', text)
-            is_successful, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-            if not is_successful:
-                raise Exception(error_message)
-            role, response = get_role_and_content(response)
-            msg = TextSendMessage(text=response)
+            url = website.get_url_from_text(text)
+            if url:
+                if youtube.retrieve_video_id(text):
+                    is_successful, chunks, error_message = youtube.get_transcript_chunks(youtube.retrieve_video_id(text))
+                    if not is_successful:
+                        raise Exception(error_message)
+                    youtube_transcript_reader = YoutubeTranscriptReader(user_model)
+                    role, response = youtube_transcript_reader.summarize(chunks)
+                    msg = TextSendMessage(text=response)
+                else:
+                    chunks = website.get_content_from_url(url)
+                    if len(chunks) == 0:
+                        msg = TextSendMessage(text='無法撈取此網站文字')
+                    else:
+                        website_reader = WebsiteReader(user_model)
+                        role, response = website_reader.summarize(chunks)
+                        msg = TextSendMessage(text=response)
+            else:
+                is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+                if not is_successful:
+                    raise Exception(error_message)
+                role, response = get_role_and_content(response)
+                msg = TextSendMessage(text=response)
             memory.append(user_id, role, response)
 
     except ValueError:
@@ -134,6 +158,8 @@ def handle_audio_message(event):
             msg = TextSendMessage(text=response)
     except ValueError:
         msg = TextSendMessage(text='請先註冊你的 API Token，格式為 /註冊 [API TOKEN]')
+    except KeyError:
+        msg = TextSendMessage(text='請先註冊 Token，格式為 /註冊 sk-xxxxx')
     except Exception as e:
         memory.remove(user_id)
         if str(e).startswith('Incorrect API key provided'):
