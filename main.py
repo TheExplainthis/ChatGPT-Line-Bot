@@ -118,7 +118,8 @@ def handle_text_message(event):
                 msg = TextSendMessage(text=response)
             memory.append(user_id, role, response)
 
-    except ValueError:
+    except ValueError as e:
+        print(str(e))
         msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
     except KeyError:
         msg = TextSendMessage(text='請先註冊 Token，格式為 /註冊 sk-xxxxx')
