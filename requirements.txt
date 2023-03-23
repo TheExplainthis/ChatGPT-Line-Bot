@@ -3,3 +3,4 @@ python-dotenv==0.21.1
 Flask==2.2.2
 opencc-python-reimplemented==0.1.4
 beautifulsoup4==4.11.2
+youtube-transcript-api==0.5.0
