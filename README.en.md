@@ -6,7 +6,7 @@
 
 
 ## Update
-- 2023/03/23 Update summary of Youtube videos and news articles (supports: United Daily News, Yahoo News, Central News Agency, Storm Media, TVBS, Liberty Times, ETtoday, China Times, Line News, TTV News)
+- 2023/03/23 Update summary of Youtube videos and news articles (supports: United Daily News, SET, Yahoo News, Central News Agency, Storm Media, TVBS, Liberty Times, ETtoday, China Times, Line News, TTV News)
 - 2023/03/18 Added Whisper service, users can now add their own tokens, and added command (refer to the documentation below)
 - 2023/03/03 Model change to chat completion: `gpt-3.5-turbo`
 
