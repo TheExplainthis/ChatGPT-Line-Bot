@@ -99,7 +99,7 @@ def handle_text_message(event):
                     is_successful, chunks, error_message = youtube.get_transcript_chunks(youtube.retrieve_video_id(text))
                     if not is_successful:
                         raise Exception(error_message)
-                    youtube_transcript_reader = YoutubeTranscriptReader(user_model)
+                    youtube_transcript_reader = YoutubeTranscriptReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
                     role, response = youtube_transcript_reader.summarize(chunks)
                     msg = TextSendMessage(text=response)
                 else:
@@ -107,7 +107,7 @@ def handle_text_message(event):
                     if len(chunks) == 0:
                         msg = TextSendMessage(text='無法撈取此網站文字')
                     else:
-                        website_reader = WebsiteReader(user_model)
+                        website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
                         role, response = website_reader.summarize(chunks)
                         msg = TextSendMessage(text=response)
             else:

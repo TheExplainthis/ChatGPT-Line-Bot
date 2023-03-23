@@ -42,15 +42,16 @@ class Youtube:
 
 
 class YoutubeTranscriptReader:
-    def __init__(self, model=None):
+    def __init__(self, model=None, model_engine=None):
         self.summary_system_prompt = os.getenv('YOUTUBE_SYSTEM_MESSAGE') or YOUTUBE_SYSTEM_MESSAGE
         self.part_message_format = os.getenv('PART_MESSAGE_FORMAT') or PART_MESSAGE_FORMAT
         self.whole_message_format = os.getenv('WHOLE_MESSAGE_FORMAT') or WHOLE_MESSAGE_FORMAT
         self.single_message_format = os.getenv('SINGLE_MESSAGE_FORMAT') or SINGLE_MESSAGE_FORMAT
         self.model = model
+        self.model_engine = model_engine
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completions(msg)
+        role, content = self.model.chat_completions(msg, self.model_engine)
         return role, content
 
     def summarize(self, chunks):

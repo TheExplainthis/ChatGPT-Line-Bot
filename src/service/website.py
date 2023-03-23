@@ -42,14 +42,15 @@ class Website:
 
 
 class WebsiteReader:
-    def __init__(self, model=None):
+    def __init__(self, model=None, model_engine=None):
         self.system_message = os.getenv('WEBSITE_SYSTEM_MESSAGE') or WEBSITE_SYSTEM_MESSAGE
         self.message_format = os.getenv('WEBSITE_MESSAGE_FORMAT') or WEBSITE_MESSAGE_FORMAT
         self.model = model
         self.text_length_limit = 1800
+        self.model_engine = model_engine
 
     def send_msg(self, msg):
-        role, content = self.model.chat_completions(msg)
+        role, content = self.model.chat_completions(msg, self.model_engine)
         return role, content
 
     def summarize(self, chunks):
