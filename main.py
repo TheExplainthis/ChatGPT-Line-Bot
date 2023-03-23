@@ -15,17 +15,18 @@ import uuid
 from src.models import OpenAIModel
 from src.memory import Memory
 from src.logger import logger
-from src.storage import Storage
+from src.storage import Storage, FileStorage, MongoStorage
 from src.utils import get_role_and_content
 from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
+from src.mongodb import mongodb
 
 load_dotenv('.env')
 
 app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
-storage = Storage('db.json')
+storage = None
 youtube = Youtube(step=4)
 website = Website()
 
@@ -62,8 +63,9 @@ def handle_text_message(event):
             if not is_successful:
                 raise ValueError('Invalid API token')
             model_management[user_id] = model
-            api_keys[user_id] = api_key
-            storage.save(api_keys)
+            storage.save({
+                user_id: api_key
+            })
             msg = TextSendMessage(text='Token 有效，註冊成功')
 
         elif text.startswith('/指令說明'):
@@ -180,6 +182,11 @@ def home():
 
 
 if __name__ == "__main__":
+    if os.getenv('USE_MONGO'):
+        mongodb.connect_to_database()
+        storage = Storage(MongoStorage(mongodb.db))
+    else:
+        storage = Storage(FileStorage('db.json'))
     try:
         data = storage.load()
         for user_id in data.keys():
