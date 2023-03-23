@@ -108,14 +108,13 @@ def handle_text_message(event):
                 else:
                     chunks = website.get_content_from_url(url)
                     if len(chunks) == 0:
-                        msg = TextSendMessage(text='無法撈取此網站文字')
-                    else:
-                        website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-                        is_successful, response, error_message = website_reader.summarize(chunks)
-                        if not is_successful:
-                            raise Exception(error_message)
-                        role, response = get_role_and_content(response)
-                        msg = TextSendMessage(text=response)
+                        raise ValueError('無法撈取此網站文字')
+                    website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
+                    is_successful, response, error_message = website_reader.summarize(chunks)
+                    if not is_successful:
+                        raise Exception(error_message)
+                    role, response = get_role_and_content(response)
+                    msg = TextSendMessage(text=response)
             else:
                 is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
                 if not is_successful:
