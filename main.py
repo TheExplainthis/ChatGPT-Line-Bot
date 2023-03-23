@@ -108,7 +108,7 @@ def handle_text_message(event):
                 else:
                     chunks = website.get_content_from_url(url)
                     if len(chunks) == 0:
-                        raise ValueError('無法撈取此網站文字')
+                        raise Exception('無法撈取此網站文字')
                     website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
                     is_successful, response, error_message = website_reader.summarize(chunks)
                     if not is_successful:
@@ -124,7 +124,6 @@ def handle_text_message(event):
             memory.append(user_id, role, response)
 
     except ValueError as e:
-        print(str(e))
         msg = TextSendMessage(text='Token 無效，請重新註冊，格式為 /註冊 sk-xxxxx')
     except KeyError:
         msg = TextSendMessage(text='請先註冊 Token，格式為 /註冊 sk-xxxxx')
