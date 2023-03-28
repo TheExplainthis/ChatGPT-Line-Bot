@@ -118,3 +118,5 @@ dist
 .pnp.*
 
 
+*.json
+venv/
