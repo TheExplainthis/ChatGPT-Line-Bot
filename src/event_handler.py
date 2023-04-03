@@ -1,3 +1,4 @@
+from src.logger import logger
 
 
 def get_event_id(event):
@@ -29,6 +30,10 @@ def event_handler(func):
     def wrapper(event):
         try:
             reply_token = event.reply_token
+            # If the event is a join event, the user ID is not available.
+            if event.type == 'join':
+                return func(reply_token)
+            # If the event is a message event, the message type can be text or audio.
             id = get_event_id(event)
             if event.message.type == 'text':
                 text = event.message.text.strip()

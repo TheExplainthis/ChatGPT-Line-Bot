@@ -7,7 +7,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, AudioMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, AudioMessage, JoinEvent
 )
 import os
 import uuid
@@ -76,7 +76,7 @@ def handle_text_message(reply_token, user_id, text):
             else:
                 msg = TextSendMessage(text='尚未註冊')
 
-        elif text.startswith('/指令說明'):
+        elif text.startswith('/指令說明') or text.startswith('/help'):
             msg = TextSendMessage(
                 text="指令：\n/註冊 + API Token\n👉 API Token 請先到 https://platform.openai.com/ 註冊登入後取得\n" + \
                      "\n/目前金鑰\n👉 顯示目前註冊的 API Token\n" + \
@@ -197,6 +197,15 @@ def handle_audio_message(reply_token, user_id, message_id):
         else:
             msg = TextSendMessage(text=str(e))
     os.remove(input_audio_path)
+    line_bot_api.reply_message(reply_token, msg)
+
+
+@handler.add(JoinEvent)
+@event_handler
+def handle_join_event(reply_token):
+    text = '歡迎使用，請輸入 \n/註冊 [OpenAI API key]，來註冊你的 API key\n或輸入 /help 來查看其他指令\n' + \
+    '\n注意！如果群組有其他人，會共用同一個 OpenAI key，意味著所有在此群組的發言都會產生費用，此費用為註冊金鑰者需要支付！'
+    msg = TextSendMessage(text=text)
     line_bot_api.reply_message(reply_token, msg)
 
 
