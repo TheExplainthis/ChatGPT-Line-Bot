@@ -6,7 +6,7 @@
 
 
 ## 更新
-- 2023/04/03 新增將 LINE bot 加入群組的功能，每個群組的 bot 都是一個初始化的狀態，可以指定獨立的 Token，與 prompt，來劃分使用上的情境
+- 2023/04/03 新增將 LINE bot 加入群組的功能，每個群組的 bot 都是一個初始化的狀態，可以指定獨立的 API key，與 prompt，來劃分使用上的情境（需要到 LINE developer Message API 開啟 Allow bot to join group chats 功能)
 - 2023/03/23 更新總結 Youtube 影片內容、新聞文章（支援：聯合報、Yahoo 新聞、三立新聞網、中央通訊社、風傳媒、TVBS、自由時報、ETtoday、中時新聞網、Line 新聞、台視新聞網）
 - 2023/03/18 新增 Whipser 服務、用戶可以新增自己的 Token、新增指令（參考文件下方）
 - 2023/03/03 模型換成 chat completion: `gpt-3.5-turbo`
