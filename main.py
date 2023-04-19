@@ -7,7 +7,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, AudioMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, AudioMessage, JoinEvent
 )
 import os
 import uuid
@@ -20,6 +20,7 @@ from src.utils import get_role_and_content
 from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
 from src.mongodb import mongodb
+from src.event_handler import event_handler
 
 load_dotenv('.env')
 
@@ -50,9 +51,10 @@ def callback():
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def handle_text_message(event):
-    user_id = event.source.user_id
-    text = event.message.text.strip()
+@event_handler
+def handle_text_message(reply_token, user_id, text):
+    if user_id is None:
+        line_bot_api.reply_message(reply_token, text)
     logger.info(f'{user_id}: {text}')
 
     try:
@@ -67,13 +69,33 @@ def handle_text_message(event):
                 user_id: api_key
             })
             msg = TextSendMessage(text='Token 有效，註冊成功')
+        
+        elif text.startswith('/目前金鑰'):
+            if user_id in model_management:
+                msg = TextSendMessage(text=f'目前使用 Token {model_management[user_id].api_key}')
+            else:
+                msg = TextSendMessage(text='尚未註冊')
 
-        elif text.startswith('/指令說明'):
-            msg = TextSendMessage(text="指令：\n/註冊 + API Token\n👉 API Token 請先到 https://platform.openai.com/ 註冊登入後取得\n\n/系統訊息 + Prompt\n👉 Prompt 可以命令機器人扮演某個角色，例如：請你扮演擅長做總結的人\n\n/清除\n👉 當前每一次都會紀錄最後兩筆歷史紀錄，這個指令能夠清除歷史訊息\n\n/圖像 + Prompt\n👉 會調用 DALL∙E 2 Model，以文字生成圖像\n\n語音輸入\n👉 會調用 Whisper 模型，先將語音轉換成文字，再調用 ChatGPT 以文字回覆\n\n其他文字輸入\n👉 調用 ChatGPT 以文字回覆")
+        elif text.startswith('/指令說明') or text.startswith('/help'):
+            msg = TextSendMessage(
+                text="指令：\n/註冊 + API Token\n👉 API Token 請先到 https://platform.openai.com/ 註冊登入後取得\n" + \
+                     "\n/目前金鑰\n👉 顯示目前註冊的 API Token\n" + \
+                     "\n/系統訊息 + Prompt\n👉 Prompt 可以命令機器人扮演某個角色，例如：請你扮演擅長做總結的人\n" + \
+                     "\n/目前系統訊息 \n👉 顯示目前機器人扮演的角色\n" + \
+                     "\n/清除\n👉 當前每一次都會紀錄最後兩筆歷史紀錄，這個指令能夠清除歷史訊息\n" + \
+                     "\n/圖像 + Prompt\n👉 會調用 DALL∙E 2 Model，以文字生成圖像\n" + \
+                     "\n語音輸入\n👉 會調用 Whisper 模型，先將語音轉換成文字，再調用 ChatGPT 以文字回覆\n" + \
+                     "\n其他文字輸入\n👉 調用 ChatGPT 以文字回覆\n"
+                     )
+            logger.info(msg)
 
         elif text.startswith('/系統訊息'):
             memory.change_system_message(user_id, text[5:].strip())
             msg = TextSendMessage(text='輸入成功')
+        
+        elif text.startswith('/目前系統訊息'):
+            system_message = memory.system_messages.get(user_id) or os.getenv('SYSTEM_MESSAGE')
+            msg = TextMessage(text=f'目前系統訊息：{system_message}')
 
         elif text.startswith('/清除'):
             memory.remove(user_id)
@@ -136,13 +158,15 @@ def handle_text_message(event):
             msg = TextSendMessage(text='已超過負荷，請稍後再試')
         else:
             msg = TextSendMessage(text=str(e))
-    line_bot_api.reply_message(event.reply_token, msg)
+    line_bot_api.reply_message(reply_token, msg)
 
 
 @handler.add(MessageEvent, message=AudioMessage)
-def handle_audio_message(event):
-    user_id = event.source.user_id
-    audio_content = line_bot_api.get_message_content(event.message.id)
+@event_handler
+def handle_audio_message(reply_token, user_id, message_id):
+    if user_id is None:
+        line_bot_api.reply_message(reply_token, message_id)
+    audio_content = line_bot_api.get_message_content(message_id)
     input_audio_path = f'{str(uuid.uuid4())}.m4a'
     with open(input_audio_path, 'wb') as fd:
         for chunk in audio_content.iter_content():
@@ -173,7 +197,16 @@ def handle_audio_message(event):
         else:
             msg = TextSendMessage(text=str(e))
     os.remove(input_audio_path)
-    line_bot_api.reply_message(event.reply_token, msg)
+    line_bot_api.reply_message(reply_token, msg)
+
+
+@handler.add(JoinEvent)
+@event_handler
+def handle_join_event(reply_token):
+    text = '歡迎使用，請輸入 \n/註冊 [OpenAI API key]，來註冊你的 API key\n或輸入 /help 來查看其他指令\n' + \
+    '\n注意！如果群組有其他人，會共用同一個 OpenAI key，意味著所有在此群組的發言都會產生費用，此費用為註冊金鑰者需要支付！'
+    msg = TextSendMessage(text=text)
+    line_bot_api.reply_message(reply_token, msg)
 
 
 @app.route("/", methods=['GET'])

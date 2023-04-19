@@ -25,7 +25,7 @@ WEBSITE_MESSAGE_FORMAT = """
 
 class Website:
     def get_url_from_text(self, text: str):
-        url_regex = re.compile(r'https?://\S+')
+        url_regex = re.compile(r'^https?://\S+')
         match = re.search(url_regex, text)
         if match:
             return match.group()
