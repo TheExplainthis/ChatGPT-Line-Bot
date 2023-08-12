@@ -30,6 +30,7 @@ storage = None
 youtube = Youtube(step=4)
 website = Website()
 default_api_key = os.getenv('DEFAULT_API_KEY')
+open_ai_model = OpenAIModel(api_key=default_api_key)
 
 memory = Memory(system_message=os.getenv(
     'SYSTEM_MESSAGE'), memory_message_count=2)
@@ -53,8 +54,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     user_id = event.source.user_id
-    model = OpenAIModel(api_key=default_api_key)
-    model_management[user_id] = model
+    model_management[user_id] = open_ai_model
     text = event.message.text.strip()
     logger.info(f'{user_id}: {text}')
 
