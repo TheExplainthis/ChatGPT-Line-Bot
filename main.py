@@ -29,9 +29,10 @@ handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 storage = None
 youtube = Youtube(step=4)
 website = Website()
+default_api_key = os.getenv('DEFAULT_API_KEY')
 
-
-memory = Memory(system_message=os.getenv('SYSTEM_MESSAGE'), memory_message_count=2)
+memory = Memory(system_message=os.getenv(
+    'SYSTEM_MESSAGE'), memory_message_count=2)
 model_management = {}
 api_keys = {}
 
@@ -52,13 +53,15 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     user_id = event.source.user_id
+    model = OpenAIModel(api_key=default_api_key)
+    model_management[user_id] = model
     text = event.message.text.strip()
     logger.info(f'{user_id}: {text}')
 
     try:
         if text.startswith('/註冊'):
             api_key = text[3:].strip()
-            model = OpenAIModel(api_key=api_key)
+
             is_successful, _, _ = model.check_token_valid()
             if not is_successful:
                 raise ValueError('Invalid API token')
@@ -82,7 +85,8 @@ def handle_text_message(event):
         elif text.startswith('/圖像'):
             prompt = text[3:].strip()
             memory.append(user_id, 'user', prompt)
-            is_successful, response, error_message = model_management[user_id].image_generations(prompt)
+            is_successful, response, error_message = model_management[user_id].image_generations(
+                prompt)
             if not is_successful:
                 raise Exception(error_message)
             url = response['data'][0]['url']
@@ -98,11 +102,14 @@ def handle_text_message(event):
             url = website.get_url_from_text(text)
             if url:
                 if youtube.retrieve_video_id(text):
-                    is_successful, chunks, error_message = youtube.get_transcript_chunks(youtube.retrieve_video_id(text))
+                    is_successful, chunks, error_message = youtube.get_transcript_chunks(
+                        youtube.retrieve_video_id(text))
                     if not is_successful:
                         raise Exception(error_message)
-                    youtube_transcript_reader = YoutubeTranscriptReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-                    is_successful, response, error_message = youtube_transcript_reader.summarize(chunks)
+                    youtube_transcript_reader = YoutubeTranscriptReader(
+                        user_model, os.getenv('OPENAI_MODEL_ENGINE'))
+                    is_successful, response, error_message = youtube_transcript_reader.summarize(
+                        chunks)
                     if not is_successful:
                         raise Exception(error_message)
                     role, response = get_role_and_content(response)
@@ -111,14 +118,17 @@ def handle_text_message(event):
                     chunks = website.get_content_from_url(url)
                     if len(chunks) == 0:
                         raise Exception('無法撈取此網站文字')
-                    website_reader = WebsiteReader(user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-                    is_successful, response, error_message = website_reader.summarize(chunks)
+                    website_reader = WebsiteReader(
+                        user_model, os.getenv('OPENAI_MODEL_ENGINE'))
+                    is_successful, response, error_message = website_reader.summarize(
+                        chunks)
                     if not is_successful:
                         raise Exception(error_message)
                     role, response = get_role_and_content(response)
                     msg = TextSendMessage(text=response)
             else:
-                is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+                is_successful, response, error_message = user_model.chat_completions(
+                    memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
                 if not is_successful:
                     raise Exception(error_message)
                 role, response = get_role_and_content(response)
@@ -152,11 +162,13 @@ def handle_audio_message(event):
         if not model_management.get(user_id):
             raise ValueError('Invalid API token')
         else:
-            is_successful, response, error_message = model_management[user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+            is_successful, response, error_message = model_management[user_id].audio_transcriptions(
+                input_audio_path, 'whisper-1')
             if not is_successful:
                 raise Exception(error_message)
             memory.append(user_id, 'user', response['text'])
-            is_successful, response, error_message = model_management[user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
+            is_successful, response, error_message = model_management[user_id].chat_completions(
+                memory.get(user_id), 'gpt-3.5-turbo')
             if not is_successful:
                 raise Exception(error_message)
             role, response = get_role_and_content(response)
