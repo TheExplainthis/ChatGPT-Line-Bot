@@ -6,6 +6,7 @@
 
 
 ## Update
+- 2023/04/03 The feature of adding a LINE bot to a group has been added. Each bot in the group begins in an initialized state and can be designated with its own API key and prompt to distinguish its usage scenarios (NeedS to enable the "Allow bot to join group chats" feature in the LINE Developer Message API page.)
 - 2023/03/23 Update summary of Youtube videos and news articles (supports: United Daily News, SET, Yahoo News, Central News Agency, Storm Media, TVBS, Liberty Times, ETtoday, China Times, Line News, TTV News)
 - 2023/03/18 Added Whisper service, users can now add their own tokens, and added command (refer to the documentation below)
 - 2023/03/03 Model change to chat completion: `gpt-3.5-turbo`
@@ -82,7 +83,9 @@ To start a conversation with ChatGPT, simply type your message in the text input
 | Command | Description |
 | ------- | ----------- |
 | `/註冊` | Enter `/註冊` + OpenAI API Token in the input box to register your token|
+| `/目前金鑰` | Enter `/目前金鑰 `， showing current registered OpenAI API Token|
 | `/系統訊息` | Enter `/系統訊息` + the role you want ChatGPT to play in the input box|
+| `/目前系統訊息` | Enter `/目前系統訊息 `，showing the role ChatGPT play currently|
 | `/清除` | Enter `/清除` in the input box to clear the chat history|
 | `/圖像` | Enter `/圖像` + command in the input box to call the DALL·E 2 model and generate an image|
 | Voice input | Use voice input, the system will automatically translate the voice into text, and ChatGPT will respond in text| 

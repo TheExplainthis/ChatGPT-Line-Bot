@@ -119,3 +119,7 @@ dist
 
 # keys 
 keys.txt
+
+
+*.json
+venv/
