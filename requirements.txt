@@ -5,3 +5,4 @@ opencc-python-reimplemented==0.1.4
 beautifulsoup4==4.11.2
 youtube-transcript-api==0.5.0
 pymongo==4.3.3
+Werkzeug==2.2.2
