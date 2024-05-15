@@ -74,6 +74,12 @@ web_modules/
 .env
 .env.test
 
+# config yml file
+config/config.yml
+
+# ssl setting files
+config/ssl/*
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -92,11 +98,17 @@ dist
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 
+*.pyc
+
 # vuepress build output
 .vuepress/dist
 
 # Serverless directories
 .serverless/
+
+# Testing notebook
+.ipynb_checkpoints/
+*.ipynb
 
 # FuseBox cache
 .fusebox/
@@ -116,5 +128,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
 

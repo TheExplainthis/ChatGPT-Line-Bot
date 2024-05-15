@@ -1,0 +1,25 @@
+---
+line:
+  channel_access_token: 
+  channel_secret: 
+
+openai:
+  api_key: 
+  assistant_id: 
+
+db:
+  host: 
+  port: 5432
+  db_name: 
+  user: 
+  password: 
+  sslmode: 
+  sslrootcert: 
+  sslcert: 
+  sslkey: 
+
+logfile: ./logs/linebot.log
+
+commands:
+  help: "這裡是台南市議會聊天機器人，目前已經輸入了台南市議會第四屆公開議事錄中的會議逐字稿，請輸入您的問題，以便我檢索逐字稿內容來回應您。若您希望重設聊天內容，請輸入「/reset」以重置聊天。"
+...

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台南市議會聊天機器人</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* 設置預設字體 */
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9; /* 設置背景顏色 */
+            color: #333; /* 設置文字顏色 */
+        }
+
+        h1 {
+            background-color: #0056b3; /* 藍色背景 */
+            color: white; /* 白色文字 */
+            padding: 20px; /* 增加內邊距 */
+            text-align: center; /* 標題置中 */
+        }
+
+        #chatbox {
+            margin: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            border: 2px solid #ddd; /* 邊框顏色 */
+            min-height: 300px; /* 設置最小高度 */
+            overflow: auto; /* 自動添加滾動條 */
+        }
+
+        #chatlog p {
+            margin: 10px 10px; /* 每條訊息的間距調整為更寬鬆 */
+            line-height: 1.5; /* 行間距也稍微增加 */
+        }
+
+        textarea {
+            width: calc(100% - 22px); /* 寬度調整，考慮到邊框和內邊距 */
+            margin: 10px; /* 外邊距 */
+            height: 100px;
+            font-size: 16px;
+            box-sizing: border-box;
+            border-radius: 4px; /* 邊框圓角 */
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #007bff; /* 藍色背景 */
+            color: white; /* 白色文字 */
+            padding: 10px 20px; /* 按鈕內邊距 */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; /* 鼠標懸停顯示手型 */
+            font-size: 16px;
+            margin-left: 10px; /* 左邊距 */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* 鼠標懸停顏色變化 */
+        }
+    </style>
+</head>
+<body>
+    <h1>台南市議會聊天機器人測試聊天介面</h1>
+    <div id="chatbox">
+        <p id="chatlog"></p>
+    </div>
+    <textarea id="userInput" placeholder="Enter multiple lines of text here..."></textarea>
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            var input = document.getElementById('userInput');
+            var message = input.value;
+            input.value = '';
+
+            var chatLog = document.getElementById('chatlog');
+            chatLog.innerHTML += `<p><b>You:</b> ${message}</p>`;
+
+            fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'message': message})
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatLog.innerHTML += `<p><b>Bot:</b> ${data.message.replace(/\n+/g, '<br>')}</p>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

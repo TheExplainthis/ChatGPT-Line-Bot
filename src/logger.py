@@ -1,7 +1,7 @@
 import os
 import logging
 import logging.handlers
-
+from src.config import load_config
 
 class CustomFormatter(logging.Formatter):
     __LEVEL_COLORS = [
@@ -42,7 +42,7 @@ class LoggerFactory:
     @staticmethod
     def create_logger(formatter, handlers):
         logger = logging.getLogger('chatgpt_logger')
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
         for handler in handlers:
             handler.setLevel(logging.DEBUG)
             handler.setFormatter(formatter)
@@ -51,7 +51,10 @@ class LoggerFactory:
 
 
 class FileHandler(logging.FileHandler):
-    def __init__(self, log_file):
+    def __init__(self, log_file=None):
+        if not log_file:
+            config = load_config()
+            log_file = config['logfile']
         os.makedirs(os.path.dirname(log_file), exist_ok=True)
         super().__init__(log_file)
 
@@ -59,8 +62,7 @@ class FileHandler(logging.FileHandler):
 class ConsoleHandler(logging.StreamHandler):
     pass
 
-
 formatter = CustomFormatter()
-file_handler = FileHandler('./logs')
+file_handler = FileHandler()
 console_handler = ConsoleHandler()
 logger = LoggerFactory.create_logger(formatter, [file_handler, console_handler])

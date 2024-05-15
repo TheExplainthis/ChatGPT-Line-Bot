@@ -1,0 +1,9 @@
+.git/
+
+!config/config.yml
+!config/ssl/ca-cert.crt
+!config/ssl/client-cert.pem
+!config/ssl/client-key.pem
+!config/ssl/server-ca.pem
+!config/ssl/ssl-cert.crt
+!config/ssl/ssl-key.key
